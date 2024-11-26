@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ListaDeLaCompra_1.3</string>
+    <string name="lista_de_la_compra">LISTA DE LA COMPRA</string>
+    <string name="pulsa_un_rato">Pulsa un rato un artículo del listado para modificarlo o eliminarlo. También puedes usar el menú para añadir un nuevo artículo.</string>
+    <string name="nuevo_item">Nuevo Item</string>
+    <string name="nombre">Nombre</string>
+    <string name="crear">Crear</string>
+    <string name="cancelar">Cancelar</string>
+</resources>
