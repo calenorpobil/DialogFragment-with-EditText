@@ -7,10 +7,10 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
@@ -18,16 +18,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
-        implements View.OnClickListener, Fragmento2Botones.MensajeItem{
+        implements View.OnClickListener, FragmentoPersonalizado.MensajeItem,
+        Fragmento2Botones.BorrarItem, Fragmento2Botones.ModificarItem {
 
     String[] elementosIniciales ={"Pan", "Lechuga", "Arroz",
-            "Vino", "Uvas", "Leche"};
+            "Vino", "Uvas", "Leche", "Harina", "Azúcar", "Coca cola",
+            "Infusiones", "Platos"};
     //Parejas de cada número con un valor "activado" o "desactivado":
     HashMap<Integer, Boolean> elementosAsignados = new HashMap<>();
     //Nombres de los elementos:
     ArrayList<String> elementos = new ArrayList<>(); int numElementos=0;
     //Grilla para almacenar la lista de textos:
     GridLayout gridLayout;
+    LinearLayout linearLayout;
 
     TextView titulo;
     Button nuevoItem;
@@ -48,8 +51,8 @@ public class MainActivity extends AppCompatActivity
         altoPantalla = p.y;
 
         titulo = findViewById(R.id.tvTitulo);
-        gridLayout = findViewById(R.id.gridLayout);
         nuevoItem = findViewById(R.id.button);
+        linearLayout = findViewById(R.id.linear_en_scroll);
 
         titulo.setMaxWidth(anchoPantalla);
 
@@ -57,6 +60,9 @@ public class MainActivity extends AppCompatActivity
 
 
         anyadirBotones();
+
+
+
     }
 
     private void hacerListaInicial(String[] elementosIniciales) {
@@ -78,30 +84,48 @@ public class MainActivity extends AppCompatActivity
             TextView b = new TextView(this);
             ViewGroup.LayoutParams lpView = new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+                    ViewGroup.LayoutParams.MATCH_PARENT);
             ViewGroup.LayoutParams lp =
                     new ViewGroup.LayoutParams(
                             anchoPantalla, altoPantalla/17);
-            b.setLayoutParams(lp);
+            //zb.setLayoutParams(lp);
             b.setText(elementos.get(i));
             if(Boolean.TRUE.equals(elementosAsignados.get(i))){
                 b.setTextColor(Color.parseColor("Red"));
             }else{
                 b.setTextColor(Color.parseColor("Green"));
             }
-            b.setTextSize(20);
+            b.setTextSize(40);
 
             b.setId(i);
             b.setOnClickListener(this);
 
-            gridLayout.setColumnCount(1);
-            gridLayout.addView(b);
+
+            b.setOnLongClickListener(new View.OnLongClickListener(){
+                @Override
+                public boolean onLongClick(View v){
+                    Fragmento2Botones f2b = new Fragmento2Botones();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("nombre", b.getText().toString());
+                    bundle.putInt("id", b.getId());
+                    f2b.setArguments(bundle);
+                    f2b.show(getSupportFragmentManager(),"yyy");
+                    return false;
+
+                }
+            });
+
+
+            //gridLayout.setColumnCount(1);
+            //gridLayout.addView(b);
+            linearLayout.addView(b, i, lpView);
             numElementos++;
         }
     }
 
     private void limpiarBotones(){
-        gridLayout.removeAllViewsInLayout();
+        //gridLayout.removeAllViewsInLayout();
+        linearLayout.removeAllViewsInLayout();
     }
 
 
@@ -119,8 +143,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void clickDialogoMensaje(View view) {
-        Fragmento2Botones f2b = new Fragmento2Botones();
+    public void clickNuevoItem(View view) {
+        FragmentoPersonalizado f2b = new FragmentoPersonalizado();
+        Bundle bundle = new Bundle();
+        bundle.putString("mensajeInput", "Introduce el nombre de tu nuevo item: ");
         f2b.show(getSupportFragmentManager(),"xxx");
     }
 
@@ -130,5 +156,27 @@ public class MainActivity extends AppCompatActivity
         elementos.add(mensaje);
         elementosAsignados.put(numElementos, false);
         anyadirBotones();
+    }
+    @Override
+    public void borrarItem(int i) {
+        String nombre = elementos.get(i);
+        Toast.makeText(this, nombre+" ha sido borrado",
+                Toast.LENGTH_SHORT).show();
+        elementos.remove(i);
+        elementosAsignados.remove(i);
+        anyadirBotones();
+    }
+
+    @Override
+    public void modificarItem(int id, String nombre) {
+        String mensajeInput = "Escribe aqui el nuevo nombre para "+nombre;
+        FragmentoPersonalizado f2b = new FragmentoPersonalizado();
+        Bundle bundle = new Bundle();
+        bundle.putString("nombre", nombre);
+        bundle.putString("mensajeInput", mensajeInput);
+        bundle.putInt("id", id);
+        f2b.setArguments(bundle);
+        f2b.show(getSupportFragmentManager(),"yyy");
+
     }
 }

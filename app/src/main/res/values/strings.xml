@@ -6,4 +6,6 @@
     <string name="nombre">Nombre</string>
     <string name="crear">Crear</string>
     <string name="cancelar">Cancelar</string>
+    <string name="borrar_el_elemento">Borrar el elemento</string>
+    <string name="modificar_el_elemento">Modificar el elemento</string>
 </resources>

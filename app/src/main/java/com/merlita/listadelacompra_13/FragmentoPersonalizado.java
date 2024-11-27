@@ -12,14 +12,14 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
 
 import java.util.Objects;
 
-public class Fragmento2Botones extends DialogFragment {
+public class FragmentoPersonalizado extends DialogFragment {
 
     MensajeItem mensajeItem;
     EditText et;
+    private String mensajeEntrada;
 
     @Override
     //Envia los datos a la principal
@@ -32,12 +32,16 @@ public class Fragmento2Botones extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //Posible error: poner getActivity()
         AlertDialog.Builder ventana = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_nuevo_item,null);
         et = dialogView.findViewById(R.id.username);
 
+        Bundle bundle = getArguments();
+        assert bundle != null;
+        mensajeEntrada = bundle.getString("mensajeInput");
 
         ventana.setView(dialogView)
+                .setMessage(mensajeEntrada)
                 .setPositiveButton(R.string.crear, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -51,7 +55,7 @@ public class Fragmento2Botones extends DialogFragment {
                 })
                 .setNegativeButton(R.string.cancelar, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Objects.requireNonNull(Fragmento2Botones.this.getDialog()).cancel();
+                        Objects.requireNonNull(FragmentoPersonalizado.this.getDialog()).cancel();
                     }
                 });
         return  ventana.create();

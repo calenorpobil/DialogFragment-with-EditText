@@ -3,11 +3,12 @@ package com.merlita.listadelacompra_13;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,50 +16,67 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Objects;
 
-public class FragmentoPersonalizado extends DialogFragment {
+public class Fragmento2Botones extends DialogFragment {
 
-    MensajeItem mensajeItem;
-    EditText et;
+    BorrarItem borrarItem;
+    ModificarItem modificarItem;
+    Button btBorrar, btModificar;
 
     @Override
     //Envia los datos a la principal
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mensajeItem = (MensajeItem) getActivity();
+        borrarItem = (BorrarItem) getActivity();
+        modificarItem = (ModificarItem) getActivity();
     }
 
     @NonNull
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        //Posible error: poner getActivity()
         AlertDialog.Builder ventana = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_nuevo_item,null);
-        et = dialogView.findViewById(R.id.username);
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialogo_2_botones,null);
+        dialogView.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        btBorrar = dialogView.findViewById(R.id.botonBorrar);
+        btModificar = dialogView.findViewById(R.id.botonModificar);
 
+        Bundle bundle = getArguments();
+        assert bundle != null;
+        int id = bundle.getInt("id");
 
-        ventana.setView(dialogView)
-                .setPositiveButton(R.string.crear, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        String mensaje="";
-                        if(et!=null)
-                        {
-                            mensaje = et.getText().toString();
-                        }
-                        mensajeItem.mensajeItem(mensaje);
-                    }
-                })
-                .setNegativeButton(R.string.cancelar, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Objects.requireNonNull(FragmentoPersonalizado.this.getDialog()).cancel();
-                    }
-                });
+        String nombreLista = bundle.getString("nombre");
+        String txtBotones="Borrar "+nombreLista;
+        btBorrar.setText(txtBotones);
+        txtBotones = "Modificar "+nombreLista;
+        btModificar.setText(txtBotones);
+
+        ventana.setView(dialogView);
+
+        btBorrar.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                borrarItem.borrarItem(id);
+                Objects.requireNonNull(Fragmento2Botones.this.getDialog()).cancel();
+
+            }
+        });
+        btModificar.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                modificarItem.modificarItem(id, nombreLista);
+            }
+        });
+
         return  ventana.create();
     }
 
-    //ENVIAR EL EDITTEXT AL MAINACTIVITY:
-    public interface MensajeItem
+    //ENVIAR AL MAINACTIVITY:
+    public interface BorrarItem
     {
-        void mensajeItem(String mensaje);
+        void borrarItem(int i);
+    }
+    //ENVIAR AL MAINACTIVITY:
+    public interface ModificarItem
+    {
+        void modificarItem(int id, String nombre);
     }
 }
