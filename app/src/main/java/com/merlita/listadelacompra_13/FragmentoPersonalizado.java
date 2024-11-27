@@ -12,10 +12,11 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 import java.util.Objects;
 
-public class FragmentoPersonalizado extends DialogFragment {
+public class Fragmento2Botones extends DialogFragment {
 
     MensajeItem mensajeItem;
     EditText et;
@@ -50,7 +51,7 @@ public class FragmentoPersonalizado extends DialogFragment {
                 })
                 .setNegativeButton(R.string.cancelar, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Objects.requireNonNull(FragmentoPersonalizado.this.getDialog()).cancel();
+                        Objects.requireNonNull(Fragmento2Botones.this.getDialog()).cancel();
                     }
                 });
         return  ventana.create();
